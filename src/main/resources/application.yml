@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: jwt-auth
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lottery
+    username: postgres
+    password: sorokovsky17
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
