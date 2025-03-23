@@ -21,7 +21,11 @@ import org.springframework.security.web.context.SecurityContextRepository;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            SecurityContextRepository securityContextRepository,
+            AuthenticationManager authenticationManager
+    ) throws Exception {
         return http
                 .authorizeHttpRequests(x -> {
                     x.requestMatchers("/v3/**", "/swagger-ui/**").permitAll();
@@ -32,8 +36,9 @@ public class SecurityConfig {
                     x.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .securityContext(x ->
-                        x.securityContextRepository(securityContextRepository())
+                        x.securityContextRepository(securityContextRepository)
                 )
+                .authenticationManager(authenticationManager)
                 .build();
     }
 
