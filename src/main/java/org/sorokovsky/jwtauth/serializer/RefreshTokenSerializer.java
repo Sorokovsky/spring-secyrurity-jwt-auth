@@ -36,7 +36,7 @@ public class RefreshTokenSerializer implements Function<TokenModel, String> {
                 .issueTime(Date.from(tokenModel.createdAt()))
                 .expirationTime(Date.from(tokenModel.expiresAt()))
                 .build();
-        var encrypted = new  EncryptedJWT(header, claims);
+        var encrypted = new EncryptedJWT(header, claims);
         try {
             encrypted.encrypt(encrypter);
             return encrypted.serialize();

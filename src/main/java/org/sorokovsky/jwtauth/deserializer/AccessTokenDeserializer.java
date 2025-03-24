@@ -1,7 +1,6 @@
 package org.sorokovsky.jwtauth.deserializer;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jwt.SignedJWT;
 import org.slf4j.Logger;
@@ -25,7 +24,7 @@ public class AccessTokenDeserializer implements Function<String, TokenModel> {
     public TokenModel apply(String s) {
         try {
             var signed = SignedJWT.parse(s);
-            if(signed.verify(verifier)) {
+            if (signed.verify(verifier)) {
                 var claims = signed.getJWTClaimsSet();
                 return new TokenModel(UUID.fromString(claims.getJWTID()), claims.getSubject(),
                         claims.getIssueTime().toInstant(), claims.getExpirationTime().toInstant()
