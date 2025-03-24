@@ -10,3 +10,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+jwt:
+  access-token-key: o9th4g0J-n84Tf66iykXuoCJdC3ma5dgwYPUNA0-4AM=
+  refresh-token-key: o9th4g0J-n84Tf66iykXuoCJdC3ma5dgwYPUNA0-4AM=

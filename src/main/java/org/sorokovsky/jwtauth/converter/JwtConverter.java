@@ -10,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
-import java.util.Arrays;
 import java.util.function.Function;
 
 @AllArgsConstructor
@@ -19,7 +18,6 @@ import java.util.function.Function;
 public class JwtConverter implements AuthenticationConverter {
     private static final String BEARER_PREFIX = "Bearer ";
     private Function<String, TokenModel> accessTokenDeserializer;
-    private Function<String, TokenModel> refreshTokenDeserializer;
 
     @Override
     public Authentication convert(HttpServletRequest request) {
@@ -31,13 +29,6 @@ public class JwtConverter implements AuthenticationConverter {
                 return new PreAuthenticatedAuthenticationToken(accessToken, rawAccessToken);
             }
         }
-        return Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals("__Host-refresh-token"))
-                .findFirst()
-                .map(cookie -> {
-                    var token = refreshTokenDeserializer.apply(cookie.getValue());
-                    return new PreAuthenticatedAuthenticationToken(token, cookie.getValue());
-                })
-                .orElse(null);
+        return null;
     }
 }
