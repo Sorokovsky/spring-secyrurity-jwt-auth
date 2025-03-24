@@ -1,11 +1,8 @@
 package org.sorokovsky.jwtauth.serializer;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.*;
+import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,31 +14,34 @@ import java.util.function.Function;
 public class RefreshTokenSerializer implements Function<TokenModel, String> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RefreshTokenSerializer.class);
 
-    private final JWSSigner signer;
+    private final JWEEncrypter encrypter;
     @Setter
-    private JWSAlgorithm algorithm = JWSAlgorithm.HS256;
+    private JWEAlgorithm algorithm = JWEAlgorithm.DIR;
 
-    public RefreshTokenSerializer(JWSSigner signer) {
-        this.signer = signer;
+    @Setter
+    private EncryptionMethod method = EncryptionMethod.A128GCM;
+
+    public RefreshTokenSerializer(JWEEncrypter encrypter) {
+        this.encrypter = encrypter;
     }
 
     @Override
     public String apply(TokenModel tokenModel) {
-        var header = new JWSHeader.Builder(algorithm)
+        var header = new JWEHeader.Builder(algorithm, method)
                 .keyID(tokenModel.id().toString())
                 .build();
         var claims = new JWTClaimsSet.Builder()
                 .jwtID(tokenModel.id().toString())
                 .subject(tokenModel.email())
-                .expirationTime(Date.from(tokenModel.expiresAt()))
                 .issueTime(Date.from(tokenModel.createdAt()))
+                .expirationTime(Date.from(tokenModel.expiresAt()))
                 .build();
-        var signedJWT = new SignedJWT(header, claims);
+        var encrypted = new  EncryptedJWT(header, claims);
         try {
-            signedJWT.sign(signer);
-            return signedJWT.serialize();
-        } catch (JOSEException exception) {
-            LOGGER.error(exception.getMessage(), exception);
+            encrypted.encrypt(encrypter);
+            return encrypted.serialize();
+        } catch (JOSEException e) {
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
