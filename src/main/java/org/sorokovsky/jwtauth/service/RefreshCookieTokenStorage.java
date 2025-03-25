@@ -22,10 +22,14 @@ public class RefreshCookieTokenStorage {
     }
 
     public String get(HttpServletRequest request) {
-        return Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals(COOKIE_NAME))
-                .findFirst()
-                .map(Cookie::getValue)
-                .orElse(null);
+        try {
+            return Arrays.stream(request.getCookies())
+                    .filter(cookie -> cookie.getName().equals(COOKIE_NAME))
+                    .findFirst()
+                    .map(Cookie::getValue)
+                    .orElse(null);
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 }

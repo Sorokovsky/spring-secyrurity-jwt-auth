@@ -1,8 +1,11 @@
 package org.sorokovsky.jwtauth.config;
 
 import org.sorokovsky.jwtauth.configurer.AuthenticationConfigurer;
+import org.sorokovsky.jwtauth.configurer.PreJwtConfigurer;
 import org.sorokovsky.jwtauth.deserializer.AccessTokenDeserializer;
+import org.sorokovsky.jwtauth.deserializer.RefreshTokenDeserializer;
 import org.sorokovsky.jwtauth.factory.AccessTokenFactory;
+import org.sorokovsky.jwtauth.factory.AccessTokenFromRefreshFactory;
 import org.sorokovsky.jwtauth.factory.RefreshTokenFactory;
 import org.sorokovsky.jwtauth.serializer.AccessTokenSerializer;
 import org.sorokovsky.jwtauth.serializer.RefreshTokenSerializer;
@@ -30,18 +33,34 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private static PreJwtConfigurer getPreJwtConfigurer(AccessTokenDeserializer accessTokenDeserializer, RefreshTokenDeserializer refreshTokenDeserializer, AccessTokenSerializer accessTokenSerializer) {
+        var preJwtConfigurer = new PreJwtConfigurer();
+        preJwtConfigurer.setAccessTokenSerializer(accessTokenSerializer);
+        preJwtConfigurer.setAccessBearerTokenStorage(new AccessBearerTokenStorage());
+        preJwtConfigurer.setRefreshTokenDeserializer(refreshTokenDeserializer);
+        preJwtConfigurer.setRefreshCookieTokenStorage(new RefreshCookieTokenStorage());
+        preJwtConfigurer.setFromRefreshToAccessFactory(new AccessTokenFromRefreshFactory());
+        preJwtConfigurer.setAccessTokenDeserializer(accessTokenDeserializer);
+        return preJwtConfigurer;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             UserDetailsService userDetailsService,
             AccessTokenDeserializer accessTokenDeserializer,
+            RefreshTokenDeserializer refreshTokenDeserializer,
+            AccessTokenSerializer accessTokenSerializer,
             AuthenticationHttpStrategy authenticationHttpStrategy) throws Exception {
         var jwtConfigurer = new AuthenticationConfigurer();
         jwtConfigurer.setAuthenticationUserDetailsService(authenticationUserDetailsService(userDetailsService));
         jwtConfigurer.setAccessTokenDeserializer(accessTokenDeserializer);
         jwtConfigurer.setBearerTokenStorage(new AccessBearerTokenStorage());
+        var preJwtConfigurer = getPreJwtConfigurer(accessTokenDeserializer, refreshTokenDeserializer, accessTokenSerializer);
         //noinspection removal
         http.apply(jwtConfigurer);
+        //noinspection removal
+        http.apply(preJwtConfigurer);
         return http
                 .authorizeHttpRequests(x -> {
                     x.requestMatchers("/auth/register", "/auth/login", "/swagger-ui/**", "/v3/**").permitAll();
