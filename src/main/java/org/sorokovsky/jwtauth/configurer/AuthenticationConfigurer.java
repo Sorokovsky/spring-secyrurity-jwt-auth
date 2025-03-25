@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.sorokovsky.jwtauth.converter.JwtConverter;
 import org.sorokovsky.jwtauth.model.TokenModel;
+import org.sorokovsky.jwtauth.service.AccessBearerTokenStorage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,6 +23,7 @@ import java.util.function.Function;
 @NoArgsConstructor
 @Setter
 public class AuthenticationConfigurer extends AbstractHttpConfigurer<AuthenticationConfigurer, HttpSecurity> {
+    private AccessBearerTokenStorage bearerTokenStorage;
     private Function<String, TokenModel> accessTokenDeserializer;
     private AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> authenticationUserDetailsService;
 
@@ -33,7 +35,7 @@ public class AuthenticationConfigurer extends AbstractHttpConfigurer<Authenticat
     @Override
     public void configure(HttpSecurity builder) {
         var filter = new AuthenticationFilter(builder.getSharedObject(AuthenticationManager.class),
-                new JwtConverter(accessTokenDeserializer));
+                new JwtConverter(bearerTokenStorage, accessTokenDeserializer));
         filter.setSuccessHandler((request, response, authentication) -> {
         });
         filter.setFailureHandler(

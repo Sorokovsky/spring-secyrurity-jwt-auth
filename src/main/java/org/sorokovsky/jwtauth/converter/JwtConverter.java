@@ -16,7 +16,7 @@ import java.util.function.Function;
 @NoArgsConstructor
 @Setter
 public class JwtConverter implements AuthenticationConverter {
-    private static final AccessBearerTokenStorage accessTokenStorage = new AccessBearerTokenStorage();
+    private AccessBearerTokenStorage accessTokenStorage;
     private Function<String, TokenModel> accessTokenDeserializer;
 
     @Override

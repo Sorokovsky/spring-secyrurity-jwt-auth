@@ -6,6 +6,7 @@ import org.sorokovsky.jwtauth.factory.AccessTokenFactory;
 import org.sorokovsky.jwtauth.factory.RefreshTokenFactory;
 import org.sorokovsky.jwtauth.serializer.AccessTokenSerializer;
 import org.sorokovsky.jwtauth.serializer.RefreshTokenSerializer;
+import org.sorokovsky.jwtauth.service.AccessBearerTokenStorage;
 import org.sorokovsky.jwtauth.service.BearerAuthenticationService;
 import org.sorokovsky.jwtauth.service.RefreshCookieTokenStorage;
 import org.sorokovsky.jwtauth.strategy.AuthenticationHttpStrategy;
@@ -35,6 +36,7 @@ public class SecurityConfig {
         var jwtConfigurer = new AuthenticationConfigurer();
         jwtConfigurer.setAuthenticationUserDetailsService(authenticationUserDetailsService(userDetailsService));
         jwtConfigurer.setAccessTokenDeserializer(accessTokenDeserializer);
+        jwtConfigurer.setBearerTokenStorage(new AccessBearerTokenStorage());
         //noinspection removal
         http.apply(jwtConfigurer);
         return http
@@ -64,6 +66,6 @@ public class SecurityConfig {
     public AuthenticationHttpStrategy authenticationHttpStrategy(AccessTokenSerializer accessTokenSerializer,
                                                                  RefreshTokenSerializer refreshTokenSerializer) {
         return new AuthenticationHttpStrategy(new AccessTokenFactory(), new RefreshTokenFactory(),
-                accessTokenSerializer, refreshTokenSerializer, new RefreshCookieTokenStorage());
+                accessTokenSerializer, refreshTokenSerializer, new RefreshCookieTokenStorage(), new AccessBearerTokenStorage());
     }
 }

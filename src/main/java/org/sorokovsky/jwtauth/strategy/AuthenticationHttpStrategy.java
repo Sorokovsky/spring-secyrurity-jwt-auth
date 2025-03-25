@@ -25,7 +25,7 @@ public class AuthenticationHttpStrategy implements SessionAuthenticationStrategy
     private Function<TokenModel, String> accessTokenSerializer;
     private Function<TokenModel, String> refreshTokenSerializer;
     private RefreshCookieTokenStorage cookieTokenStorage;
-    private static final AccessBearerTokenStorage bearerTokenStorage = new AccessBearerTokenStorage();
+    private AccessBearerTokenStorage bearerTokenStorage;
 
     @Override
     public void onAuthentication(Authentication authentication, HttpServletRequest request, HttpServletResponse response)
