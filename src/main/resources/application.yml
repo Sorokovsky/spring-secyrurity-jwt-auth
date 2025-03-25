@@ -11,5 +11,5 @@ spring:
       ddl-auto: update
     show-sql: true
 jwt:
-  access-token-key: o9th4g0J-n84Tf66iykXuoCJdC3ma5dgwYPUNA0-4AM=
-  refresh-token-key: o9th4g0J-n84Tf66iykXuoCJdC3ma5dgwYPUNA0-4AM=
+  access-token-key: '{"kty" : "oct","use" : "sig","kid" : "fd28e025-8d24-48bc-a51a-e2ffc8bc274b", k: "lczE94iiYk8XJce4QRFFBWZdTn8xACNolczE94iiYk8XJce4QRFFBWZdTn8xACNolczE94iiYk8XJce4QRFFBWZdTn8xACNo"}'
+  refresh-token-key: '{"kty" : "oct","use" : "sig","kid" : "fd28e025-8d24-48bc-a51a-e2ffc8bc274b", k: "lczE94iiYk8XJce4QRFFBWZdTn8xACNo"}'

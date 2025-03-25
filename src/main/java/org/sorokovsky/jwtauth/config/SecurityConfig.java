@@ -29,7 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
-import java.util.Base64;
+import java.text.ParseException;
 
 @Configuration
 @EnableWebSecurity
@@ -48,7 +48,7 @@ public class SecurityConfig {
         http.apply(jwtConfigurer);
         return http
                 .authorizeHttpRequests(x -> {
-                    x.requestMatchers("/v3/**", "/swagger-ui/**").permitAll();
+                    x.requestMatchers("/swagger-ui/**", "/v3/**").permitAll();
                     x.anyRequest().authenticated();
                 })
                 .csrf(AbstractHttpConfigurer::disable)
@@ -71,25 +71,25 @@ public class SecurityConfig {
 
     @Bean
     public AccessTokenDeserializer accessTokenDeserializer(
-            @Value("{jwt.access-token-key:}") String accessTokenKey
-    ) throws JOSEException {
+            @Value("${jwt.access-token-key:}") String accessTokenKey
+    ) throws JOSEException, ParseException {
         return new AccessTokenDeserializer(new MACVerifier(
-                new OctetSequenceKey.Builder(Base64.getDecoder().decode(accessTokenKey)).build()
+                OctetSequenceKey.parse(accessTokenKey)
         ));
     }
 
     @Bean
-    public AccessTokenSerializer accessTokenSerializer(@Value("{jwt.access-token-key:}") String accessTokenKey) throws KeyLengthException {
+    public AccessTokenSerializer accessTokenSerializer(@Value("${jwt.access-token-key:}") String accessTokenKey) throws KeyLengthException, ParseException {
         return new AccessTokenSerializer(new MACSigner(
-                new OctetSequenceKey.Builder(Base64.getDecoder().decode(accessTokenKey)).build()
+                OctetSequenceKey.parse(accessTokenKey)
         ));
     }
 
     @Bean
-    public RefreshTokenSerializer refreshTokenSerializer(@Value("{jwt.refresh-token-key:}") String refreshTokenKey) throws KeyLengthException {
+    public RefreshTokenSerializer refreshTokenSerializer(@Value("${jwt.refresh-token-key:}") String refreshTokenKey) throws KeyLengthException, ParseException {
         return new RefreshTokenSerializer(
                 new DirectEncrypter(
-                        new OctetSequenceKey.Builder(Base64.getDecoder().decode(refreshTokenKey)).build()
+                        OctetSequenceKey.parse(refreshTokenKey)
                 )
         );
     }
