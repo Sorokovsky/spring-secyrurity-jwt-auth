@@ -19,7 +19,7 @@ public class RefreshTokenSerializer implements Function<TokenModel, String> {
     private JWEAlgorithm algorithm = JWEAlgorithm.DIR;
 
     @Setter
-    private EncryptionMethod method = EncryptionMethod.A128GCM;
+    private EncryptionMethod method = EncryptionMethod.A192GCM;
 
     public RefreshTokenSerializer(JWEEncrypter encrypter) {
         this.encrypter = encrypter;

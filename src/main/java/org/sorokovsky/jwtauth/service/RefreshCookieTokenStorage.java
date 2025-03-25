@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 @Service
 public class RefreshCookieTokenStorage {
-    private static final String COOKIE_NAME = "__Host-refresh-token";
+    private static final String COOKIE_NAME = "refresh-token";
 
     public void set(String token, int lifetime, HttpServletResponse response) {
         var cookie = new Cookie(COOKIE_NAME, token);

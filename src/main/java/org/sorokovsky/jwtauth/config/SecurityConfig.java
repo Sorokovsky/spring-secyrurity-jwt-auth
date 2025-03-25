@@ -49,7 +49,7 @@ public class SecurityConfig {
                 })
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(x ->
-                        x.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        x.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                                 .addSessionAuthenticationStrategy(authenticationHttpStrategy)
                 )
                 .build();

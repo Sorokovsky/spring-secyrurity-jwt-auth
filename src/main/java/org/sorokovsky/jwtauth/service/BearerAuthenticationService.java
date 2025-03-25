@@ -7,8 +7,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
+@Component
 public class BearerAuthenticationService implements AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
     private final UserDetailsService userDetailsService;
 
