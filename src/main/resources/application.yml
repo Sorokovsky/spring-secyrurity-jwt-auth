@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/lottery
     username: postgres
-    password: sorokovsky17
+    password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
