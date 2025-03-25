@@ -12,6 +12,9 @@ import org.sorokovsky.jwtauth.service.RefreshCookieTokenStorage;
 import org.sorokovsky.jwtauth.strategy.AuthenticationHttpStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -41,12 +44,12 @@ public class SecurityConfig {
         http.apply(jwtConfigurer);
         return http
                 .authorizeHttpRequests(x -> {
-                    x.requestMatchers("/swagger-ui/**", "/v3/**").permitAll();
+                    x.requestMatchers("/auth/register", "/auth/login", "/swagger-ui/**", "/v3/**").permitAll();
                     x.anyRequest().authenticated();
                 })
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(x ->
-                        x.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        x.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                                 .addSessionAuthenticationStrategy(authenticationHttpStrategy)
                 )
                 .build();
@@ -67,5 +70,16 @@ public class SecurityConfig {
                                                                  RefreshTokenSerializer refreshTokenSerializer) {
         return new AuthenticationHttpStrategy(new AccessTokenFactory(), new RefreshTokenFactory(),
                 accessTokenSerializer, refreshTokenSerializer, new RefreshCookieTokenStorage(), new AccessBearerTokenStorage());
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            PasswordEncoder passwordEncoder,
+            UserDetailsService userDetailsService
+    ) {
+        var provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(userDetailsService);
+        return new ProviderManager(provider);
     }
 }

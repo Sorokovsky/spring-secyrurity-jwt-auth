@@ -30,6 +30,7 @@ public class AuthenticationHttpStrategy implements SessionAuthenticationStrategy
     @Override
     public void onAuthentication(Authentication authentication, HttpServletRequest request, HttpServletResponse response)
             throws SessionAuthenticationException {
+        System.out.println("Auth");
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             var accessToken = accessTokenFactory.apply(authentication);
             var refreshToken = refreshTokenFactory.apply(authentication);
