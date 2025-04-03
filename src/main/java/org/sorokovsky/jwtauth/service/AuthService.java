@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.sorokovsky.jwtauth.entity.User;
 import org.sorokovsky.jwtauth.factory.DefaultAccessTokenFactory;
 import org.sorokovsky.jwtauth.factory.DefaultRefreshTokenFactory;
-import org.sorokovsky.jwtauth.factory.RefreshTokenFactory;
 import org.sorokovsky.jwtauth.repository.UsersRepository;
 import org.sorokovsky.jwtauth.strategy.BearerAccessTokenStorageStrategy;
 import org.sorokovsky.jwtauth.strategy.CookieRefreshTokenStorageStrategy;
@@ -22,11 +21,10 @@ public class AuthService {
     private final BearerAccessTokenStorageStrategy bearerAccessTokenStorageStrategy;
     private final CookieRefreshTokenStorageStrategy cookieRefreshTokenStorageStrategy;
     private final DefaultAccessTokenFactory accessTokenFactory;
-    private final DefaultRefreshTokenFactory defaultRefreshTokenFactory;
+    private final DefaultRefreshTokenFactory refreshTokenFactory;
     private final UsersRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final RefreshTokenFactory refreshTokenFactory;
 
     public User register(User user, HttpServletResponse response) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
