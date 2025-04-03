@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.sorokovsky.jwtauth.contract.Token;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
+@Component
 public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     private Duration tokenLifetime = Duration.ofDays(7);
 
