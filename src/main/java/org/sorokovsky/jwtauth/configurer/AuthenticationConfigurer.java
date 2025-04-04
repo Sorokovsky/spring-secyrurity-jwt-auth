@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
@@ -25,9 +24,8 @@ public class AuthenticationConfigurer implements SecurityConfigurer<DefaultSecur
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationConfigurer.class);
 
     private BearerAccessTokenStorageStrategy bearerAccessTokenStorageStrategy;
-    private UserDetailsService userDetailsService;
     private AuthenticationEntryPoint authenticationEntryPoint = (request, response, authException) -> {
-        LOGGER.error(authException.getMessage(), authException);
+        LOGGER.error(authException.getMessage());
         final var apiError = new ApiError("Unauthorized", HttpStatus.UNAUTHORIZED.value());
         response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer");
         response.sendError(apiError.status());
@@ -42,7 +40,7 @@ public class AuthenticationConfigurer implements SecurityConfigurer<DefaultSecur
     @Override
     public void configure(HttpSecurity builder) throws Exception {
         final var authenticationManager = builder.getSharedObject(AuthenticationManager.class);
-        final var converter = new BearerAuthenticationConverter(bearerAccessTokenStorageStrategy, userDetailsService);
+        final var converter = new BearerAuthenticationConverter(bearerAccessTokenStorageStrategy);
         final var authenticationFilter = new AuthenticationFilter(authenticationManager, converter);
         authenticationFilter.setSuccessHandler((request, response, authentication) -> {
         });
@@ -57,11 +55,6 @@ public class AuthenticationConfigurer implements SecurityConfigurer<DefaultSecur
 
     public AuthenticationConfigurer bearerAccessTokenStorageStrategy(BearerAccessTokenStorageStrategy bearerAccessTokenStorageStrategy) {
         this.bearerAccessTokenStorageStrategy = bearerAccessTokenStorageStrategy;
-        return this;
-    }
-
-    public AuthenticationConfigurer userDetailsService(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
         return this;
     }
 }
