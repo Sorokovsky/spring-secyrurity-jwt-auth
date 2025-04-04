@@ -1,6 +1,9 @@
 package org.sorokovsky.jwtauth.config;
 
+import lombok.RequiredArgsConstructor;
 import org.sorokovsky.jwtauth.configurer.AuthenticationConfigurer;
+import org.sorokovsky.jwtauth.repository.UsersRepository;
+import org.sorokovsky.jwtauth.resolver.CurrentUserResolver;
 import org.sorokovsky.jwtauth.serializer.TokenAuthenticationDetailsService;
 import org.sorokovsky.jwtauth.strategy.BearerAccessTokenStorageStrategy;
 import org.springframework.context.annotation.Bean;
@@ -17,12 +20,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+@RequiredArgsConstructor
+public class SecurityConfig implements WebMvcConfigurer {
+    private final UsersRepository usersRepository;
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new CurrentUserResolver(usersRepository));
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
