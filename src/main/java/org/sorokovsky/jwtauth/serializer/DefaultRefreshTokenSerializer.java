@@ -15,7 +15,7 @@ public class DefaultRefreshTokenSerializer extends AbstractTokenSerializer {
 
     private final JWEEncrypter encrypter;
     private JWEAlgorithm algorithm = JWEAlgorithm.DIR;
-    private EncryptionMethod method = EncryptionMethod.A128GCM;
+    private EncryptionMethod method = EncryptionMethod.A192GCM;
 
     @Override
     public String apply(Token token) {

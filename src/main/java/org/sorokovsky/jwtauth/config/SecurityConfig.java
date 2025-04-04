@@ -2,12 +2,10 @@ package org.sorokovsky.jwtauth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,27 +19,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            PasswordEncoder passwordEncoder
-    ) {
-        final var manager = new DaoAuthenticationProvider(passwordEncoder);
-        return new ProviderManager(manager);
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authenticationManager(authenticationManager)
                 .authorizeHttpRequests(config -> config
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/**",
-                                "/auth/register/",
-                                "/auth/login/"
-                        ).permitAll()
+                        .requestMatchers("/auth/login", "/auth/register", "/auth/refresh-tokens", "/swagger-ui/**", "/v3/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .sessionManagement(config -> config
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .build();
     }
 }

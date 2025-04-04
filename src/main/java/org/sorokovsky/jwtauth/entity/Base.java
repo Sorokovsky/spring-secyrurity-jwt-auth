@@ -19,11 +19,11 @@ import java.time.LocalDateTime;
 public class Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     @CreationTimestamp
-    public LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    public LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 }

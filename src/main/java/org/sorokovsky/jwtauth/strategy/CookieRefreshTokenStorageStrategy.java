@@ -23,7 +23,9 @@ public class CookieRefreshTokenStorageStrategy implements TokenStorageStrategy {
 
     @Override
     public Token get(HttpServletRequest request) {
-        final var rawToken = Arrays.stream(request.getCookies())
+        final var cookies = request.getCookies();
+        if (cookies == null) return null;
+        final var rawToken = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals(cookieName))
                 .map(Cookie::getValue)
                 .findFirst()

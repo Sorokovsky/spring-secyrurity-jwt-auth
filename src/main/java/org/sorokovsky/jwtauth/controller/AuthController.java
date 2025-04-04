@@ -1,7 +1,9 @@
 package org.sorokovsky.jwtauth.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.sorokovsky.jwtauth.contract.GetUser;
 import org.sorokovsky.jwtauth.contract.LoginUser;
 import org.sorokovsky.jwtauth.contract.RegisterUser;
 import org.sorokovsky.jwtauth.service.AuthService;
@@ -19,12 +21,20 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterUser registerUser, HttpServletResponse response) {
-        return ResponseEntity.ok(authService.register(registerUser, response));
+        final var createdUser = authService.register(registerUser, response);
+        final var getUserDto = new GetUser(createdUser.getId(), createdUser.getEmail(), createdUser.getCreatedAt(), createdUser.getUpdatedAt());
+        return ResponseEntity.ok(getUserDto);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginUser loginUser, HttpServletResponse response) {
+    public ResponseEntity<Void> login(@RequestBody LoginUser loginUser, HttpServletResponse response) {
         authService.login(loginUser, response);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/refresh-tokens")
+    public ResponseEntity<Void> refreshTokens(HttpServletRequest request, HttpServletResponse response) {
+        authService.refreshTokens(request, response);
         return ResponseEntity.noContent().build();
     }
 }
