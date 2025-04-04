@@ -1,5 +1,6 @@
 package org.sorokovsky.jwtauth.model;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.sorokovsky.jwtauth.entity.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Data
 public class UserDetailsModel implements UserDetails {
     private final User user;
 

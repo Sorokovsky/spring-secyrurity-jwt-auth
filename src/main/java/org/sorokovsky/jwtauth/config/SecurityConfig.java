@@ -2,7 +2,6 @@ package org.sorokovsky.jwtauth.config;
 
 import lombok.RequiredArgsConstructor;
 import org.sorokovsky.jwtauth.configurer.AuthenticationConfigurer;
-import org.sorokovsky.jwtauth.repository.UsersRepository;
 import org.sorokovsky.jwtauth.resolver.CurrentUserResolver;
 import org.sorokovsky.jwtauth.serializer.TokenAuthenticationDetailsService;
 import org.sorokovsky.jwtauth.strategy.BearerAccessTokenStorageStrategy;
@@ -30,11 +29,10 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig implements WebMvcConfigurer {
-    private final UsersRepository usersRepository;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new CurrentUserResolver(usersRepository));
+        resolvers.add(new CurrentUserResolver());
     }
 
     @Bean
