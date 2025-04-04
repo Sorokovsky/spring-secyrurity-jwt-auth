@@ -14,6 +14,7 @@ import org.sorokovsky.jwtauth.factory.RefreshTokenFactory;
 import org.sorokovsky.jwtauth.repository.UsersRepository;
 import org.sorokovsky.jwtauth.strategy.BearerAccessTokenStorageStrategy;
 import org.sorokovsky.jwtauth.strategy.CookieRefreshTokenStorageStrategy;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,10 @@ public class AuthService {
 
     public void refreshTokens(HttpServletRequest request, HttpServletResponse response) {
         var refreshToken = cookieRefreshTokenStorageStrategy.get(request);
-        if (refreshToken == null) throw new ForbiddenException("Missing refresh token");
+        if (refreshToken == null) {
+            response.setHeader(HttpHeaders.WWW_AUTHENTICATE, "Form");
+            throw new ForbiddenException("Missing refresh token");
+        }
         refreshToken = recreateTokenFactory.apply(refreshToken);
         final var accessToken = accessTokenFactory.apply(refreshToken);
         bearerAccessTokenStorageStrategy.set(response, accessToken);

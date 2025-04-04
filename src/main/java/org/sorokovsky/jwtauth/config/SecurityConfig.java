@@ -1,5 +1,7 @@
 package org.sorokovsky.jwtauth.config;
 
+import org.sorokovsky.jwtauth.configurer.AuthenticationConfigurer;
+import org.sorokovsky.jwtauth.strategy.BearerAccessTokenStorageStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,7 +21,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            BearerAccessTokenStorageStrategy bearerAccessTokenStorageStrategy
+    ) throws Exception {
+        http.apply(new AuthenticationConfigurer(bearerAccessTokenStorageStrategy));
         return http
                 .authorizeHttpRequests(config -> config
                         .requestMatchers("/auth/login", "/auth/register", "/auth/refresh-tokens", "/swagger-ui/**", "/v3/**").permitAll()

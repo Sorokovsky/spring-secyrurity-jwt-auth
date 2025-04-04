@@ -17,6 +17,7 @@ public class DefaultRefreshTokenDeserializer extends AbstractTokenDeserializer {
 
     @Override
     public Token apply(String string) {
+        if (string == null) return null;
         try {
             final var encrypted = EncryptedJWT.parse(string);
             encrypted.decrypt(decrypter);

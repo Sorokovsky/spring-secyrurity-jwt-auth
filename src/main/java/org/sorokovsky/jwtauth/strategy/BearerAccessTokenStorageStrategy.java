@@ -12,17 +12,19 @@ import org.springframework.http.HttpHeaders;
 public class BearerAccessTokenStorageStrategy implements TokenStorageStrategy {
     private final TokenSerializer serializer;
     private final TokenDeserializer deserializer;
+    private static final String BEARER_PREFIX = "Bearer ";
 
     @Override
     public Token get(HttpServletRequest request) {
         var rawToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (rawToken == null) rawToken = request.getParameter(HttpHeaders.AUTHORIZATION);
-        return deserializer.apply(rawToken);
+        if (rawToken == null) return null;
+        return deserializer.apply(rawToken.replace(BEARER_PREFIX, ""));
     }
 
     @Override
     public void set(HttpServletResponse response, Token token) {
-        response.setHeader(HttpHeaders.AUTHORIZATION, serializer.apply(token));
+        response.setHeader(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + serializer.apply(token));
     }
 
     @Override

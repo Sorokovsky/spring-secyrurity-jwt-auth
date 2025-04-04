@@ -17,6 +17,7 @@ public class DefaultAccessTokenDeserializer extends AbstractTokenDeserializer {
 
     @Override
     public Token apply(String string) {
+        if (string == null) return null;
         try {
             final var signed = SignedJWT.parse(string);
             signed.verify(verifier);
