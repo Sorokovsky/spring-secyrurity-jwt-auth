@@ -41,4 +41,10 @@ public class AuthController {
     public ResponseEntity<GetUser> me(@CurrentUser User user) {
         return ResponseEntity.ok(new GetUser(user.getId(), user.getEmail(), user.getCreatedAt(), user.getUpdatedAt()));
     }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        authService.logout(response);
+        return ResponseEntity.noContent().build();
+    }
 }

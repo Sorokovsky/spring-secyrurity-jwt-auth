@@ -67,4 +67,9 @@ public class AuthService {
         bearerAccessTokenStorageStrategy.set(response, accessToken);
         cookieRefreshTokenStorageStrategy.set(response, refreshToken);
     }
+
+    public void logout(HttpServletResponse response) {
+        cookieRefreshTokenStorageStrategy.clear(response);
+        bearerAccessTokenStorageStrategy.clear(response);
+    }
 }

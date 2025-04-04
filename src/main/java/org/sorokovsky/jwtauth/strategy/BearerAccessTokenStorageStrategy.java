@@ -29,6 +29,6 @@ public class BearerAccessTokenStorageStrategy implements TokenStorageStrategy {
 
     @Override
     public void clear(HttpServletResponse response) {
-        response.setHeader(HttpHeaders.AUTHORIZATION, null);
+        response.setHeader(HttpHeaders.AUTHORIZATION, "");
     }
 }

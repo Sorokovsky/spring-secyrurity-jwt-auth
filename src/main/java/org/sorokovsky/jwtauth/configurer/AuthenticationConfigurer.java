@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sorokovsky.jwtauth.contract.ApiError;
 import org.sorokovsky.jwtauth.converter.BearerAuthenticationConverter;
+import org.sorokovsky.jwtauth.filter.RetranslationTokenFilter;
 import org.sorokovsky.jwtauth.strategy.BearerAccessTokenStorageStrategy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,8 +44,10 @@ public class AuthenticationConfigurer implements SecurityConfigurer<DefaultSecur
         final var authenticationManager = builder.getSharedObject(AuthenticationManager.class);
         final var converter = new BearerAuthenticationConverter(bearerAccessTokenStorageStrategy);
         final var authenticationFilter = new AuthenticationFilter(authenticationManager, converter);
+        final var retranslationFilter = new RetranslationTokenFilter(bearerAccessTokenStorageStrategy);
         authenticationFilter.setSuccessHandler((request, response, authentication) -> {
         });
+        builder.addFilterBefore(retranslationFilter, LogoutFilter.class);
         authenticationFilter.setFailureHandler(new AuthenticationEntryPointFailureHandler(authenticationEntryPoint));
         builder.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
