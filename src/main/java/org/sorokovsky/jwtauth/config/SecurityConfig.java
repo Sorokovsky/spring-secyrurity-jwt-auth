@@ -3,12 +3,14 @@ package org.sorokovsky.jwtauth.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
@@ -22,7 +24,24 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             PasswordEncoder passwordEncoder
     ) {
-        final AuthenticationProvider manager = new DaoAuthenticationProvider(passwordEncoder);
+        final var manager = new DaoAuthenticationProvider(passwordEncoder);
         return new ProviderManager(manager);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+        return http
+                .authenticationManager(authenticationManager)
+                .authorizeHttpRequests(config -> config
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/**",
+                                "/auth/register/",
+                                "/auth/login/"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .build();
     }
 }

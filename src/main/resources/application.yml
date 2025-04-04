@@ -10,3 +10,6 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+jwt:
+  access-token-key: "{'kty': 'oct', 'k': 'B2mgG3czPgogudZk4RMI3rNNYWSAfMz9B2mgG3czPgogudZk4RMI3rNNYWSAfMz9'}"
+  refresh-token-key: "{'kty': 'oct', 'k': 'B2mgG3czPgogudZk4RMI3rNNYWSAfMz9'}"
