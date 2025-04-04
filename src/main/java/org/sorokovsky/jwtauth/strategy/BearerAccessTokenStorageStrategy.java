@@ -10,9 +10,9 @@ import org.springframework.http.HttpHeaders;
 
 @RequiredArgsConstructor
 public class BearerAccessTokenStorageStrategy implements TokenStorageStrategy {
+    private static final String BEARER_PREFIX = "Bearer ";
     private final TokenSerializer serializer;
     private final TokenDeserializer deserializer;
-    private static final String BEARER_PREFIX = "Bearer ";
 
     @Override
     public Token get(HttpServletRequest request) {
